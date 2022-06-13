@@ -25,12 +25,19 @@ app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n")
 })
 
-// Set data to urls_index.ejs (sending object [templateVars] and its key [url])
+// Set data to urls_index.ejs (sending object [templateVars] --> in the .ejs file it is refered to as "urls" and its keys [url])
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
 })
 
+app.get("/urls/:shortURL", (req, res) => {
+  // The shortURL is whatever comes afet the "/urls/" in the address bar
+  const shortURL = req.params.shortURL;
+  // This shortURL is stored into the exported object (templateVars), along with another key longURL and its value (urlDatabase[shortURL]) that comes from the urlDatabase
+  const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
+  res.render("urls_show", templateVars);
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
