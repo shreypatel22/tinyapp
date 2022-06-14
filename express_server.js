@@ -45,16 +45,25 @@ app.post("/urls", (req, res) => {
 
 
 app.get('/urls/new', (req, res) => {
-    res.render("urls_new");  
+  res.render("urls_new");  
 })
 
 
 app.get("/urls/:shortURL", (req, res) => {
-  // The shortURL is whatever comes afet the "/urls/" in the address bar  --> you know itss get becuase we can access shortURL with params, with post its body
+  // The shortURL is whatever comes afet the "/urls/" in the address bar  --> you know itss get becuase we can access shortURL with params, with post its body  
   const shortURL = req.params.shortURL;
   // This shortURL is stored into the exported object (templateVars), along with another key longURL and its value (urlDatabase[shortURL]) that comes from the urlDatabase
   const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
   res.render("urls_show", templateVars);
+})
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  // gets the shortURL key from req.params.shortURL ---> why doesnt the delete come here
+  const shortURL = req.params.shortURL;
+  // delete the URL from the urlDatabase object
+  delete urlDatabase[req.params.shortURL];
+  // redirect back to urls page but now when it loads "url_index" (due to .get "/urls") it doesnt have the delete URL
+  res.redirect("/urls")
 })
 
 app.get("/u/:shortURL", (req, res) => {
