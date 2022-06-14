@@ -34,13 +34,14 @@ app.get("/urls", (req, res) => {
   res.render('urls_index', templateVars);
 })
 
+
+// You get post on /urls from urls_new.ejs (when you sumbit new url to be shorten)
 app.post("/urls", (req, res) => {
   // console.log(req.body);
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  
+  // since there is a redirect you never really stay on /urls but go to /urls/${shortURL} automatically when you click the sumbit new url button
   res.redirect(`/urls/${shortURL}`);
-
 })
 
 
@@ -55,6 +56,13 @@ app.get("/urls/:shortURL", (req, res) => {
   // This shortURL is stored into the exported object (templateVars), along with another key longURL and its value (urlDatabase[shortURL]) that comes from the urlDatabase
   const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
   res.render("urls_show", templateVars);
+})
+
+app.post("/urls/:shortURL", (req, res) => {
+  const longURL = req.body.longURL;
+  const shortURL = req.params.shortURL;
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls`);
 })
 
 app.post("/urls/:shortURL/delete", (req, res) => {
