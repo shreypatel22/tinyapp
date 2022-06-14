@@ -66,17 +66,18 @@ app.post("/urls/:shortURL", (req, res) => {
 })
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  // gets the shortURL key from req.params.shortURL ---> why doesnt the delete come here
-  const shortURL = req.params.shortURL;
+  // req.params gives an object where the key is "shortURL" and the value is whatever is in the addressbar where :shortURL is
+  // :shortURL can be named anything --> this is the name of the key in the object (after the :)
+  // the value that comes from the address bar is only inside the two surrounding /'s (/:shortURL/)
+  const shortURL = req.params.shortURL;  //if you  "/urls/:shortURLLL/delete" then you would need to do req.params.shortURLLL
   // delete the URL from the urlDatabase object
-  delete urlDatabase[req.params.shortURL];
+  delete urlDatabase[shortURL];
   // redirect back to urls page but now when it loads "url_index" (due to .get "/urls") it doesnt have the delete URL
   res.redirect("/urls")
 })
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
-  console.log(longURL);
   res.redirect(longURL);
 });
 
