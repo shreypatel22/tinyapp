@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 8080;
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser')
 
 app.use(bodyParser.urlencoded({entended: true}));
 
@@ -80,6 +81,13 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
+
+app.post("/login", (req, res) => {
+  // when you are doing the login make sure you add a redirect to your express_server.js after you do res.cookie
+  let username = req.body.username;
+  res.cookie('username', username);
+  res.redirect('/urls')
+})
 
 
 
