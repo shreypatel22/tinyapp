@@ -71,7 +71,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   // the value that comes from the address bar is only inside the two surrounding /'s (/:shortURL/)
   const shortURL = req.params.shortURL;  //if you  "/urls/:shortURLLL/delete" then you would need to do req.params.shortURLLL
   // delete the URL from the urlDatabase object
-  delete urlDatabase[shortURL];
+  delete urlDatabase[shortURL];ac
   // redirect back to urls page but now when it loads "url_index" (due to .get "/urls") it doesnt have the delete URL
   res.redirect("/urls")
 })
