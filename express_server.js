@@ -35,8 +35,12 @@ app.get("/urls", (req, res) => {
 })
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("OK");
+  // console.log(req.body);
+  let shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  
+  res.redirect(`/urls/${shortURL}`);
+
 })
 
 
@@ -46,15 +50,33 @@ app.get('/urls/new', (req, res) => {
 
 
 app.get("/urls/:shortURL", (req, res) => {
-  // The shortURL is whatever comes afet the "/urls/" in the address bar
+  // The shortURL is whatever comes afet the "/urls/" in the address bar  --> you know itss get becuase we can access shortURL with params, with post its body
   const shortURL = req.params.shortURL;
   // This shortURL is stored into the exported object (templateVars), along with another key longURL and its value (urlDatabase[shortURL]) that comes from the urlDatabase
   const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
   res.render("urls_show", templateVars);
 })
 
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  console.log(longURL);
+  res.redirect(longURL);
+});
+
 
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+const generateRandomString = () => {
+  var text = "";
+  
+  var charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+  
+  for (var i = 0; i < 6; i++)
+    text += charset.charAt(Math.floor(Math.random() * charset.length));
+  
+  return text;
+}
+
