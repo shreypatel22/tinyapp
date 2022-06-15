@@ -38,7 +38,10 @@ app.get('/hello', (req, res) => {
 
 // Set data to urls_index.ejs (sending object [templateVars] --> in the .ejs file it is refered to as "urls" and its keys [url])
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  const user = users[req.cookies.userID];
+  // console.log(user);
+
+  const templateVars = { urls: urlDatabase, user };
   res.render('urls_index', templateVars);
 })
 
@@ -54,7 +57,7 @@ app.post("/urls", (req, res) => {
 
 
 app.get('/urls/new', (req, res) => {
-  const templateVars = {username: req.cookies.username};
+  const templateVars = {users};
 
   
   res.render("urls_new", templateVars);  
@@ -64,8 +67,9 @@ app.get('/urls/new', (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   // The shortURL is whatever comes afet the "/urls/" in the address bar  --> you know itss get becuase we can access shortURL with params, with post its body  
   const shortURL = req.params.shortURL;
+  const user = users[req.cookies.userID];
   // This shortURL is stored into the exported object (templateVars), along with another key longURL and its value (urlDatabase[shortURL]) that comes from the urlDatabase
-  const templateVars = { shortURL, longURL: urlDatabase[shortURL], username: req.cookies.username };
+  const templateVars = { shortURL, longURL: urlDatabase[shortURL], user };
   res.render("urls_show", templateVars);
 })
 
@@ -106,7 +110,8 @@ app.post("/logout", (req, res) => {
 
 
 app.get("/register", (req, res) => {  
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  const user = users[req.cookies.userID];
+  const templateVars = { urls: urlDatabase, user };
   res.render("register_page", templateVars);
 })
 
@@ -122,7 +127,7 @@ app.post("/register", (req, res) => {
   }
 
   res.cookie('userID', userID);
-  console.log(users);
+  // console.log(users);
   res.redirect('/urls');
 })
 
