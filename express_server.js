@@ -2,11 +2,14 @@ const express = require('express');
 const app = express();
 const PORT = 8080;
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({entended: true}));
+app.use(cookieParser());
+
 
 app.set('view engine', 'ejs');
+
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -31,7 +34,7 @@ app.get('/hello', (req, res) => {
 
 // Set data to urls_index.ejs (sending object [templateVars] --> in the .ejs file it is refered to as "urls" and its keys [url])
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   res.render('urls_index', templateVars);
 })
 
@@ -47,7 +50,10 @@ app.post("/urls", (req, res) => {
 
 
 app.get('/urls/new', (req, res) => {
-  res.render("urls_new");  
+  const templateVars = {username: req.cookies.username};
+
+  
+  res.render("urls_new", templateVars);  
 })
 
 
@@ -55,7 +61,7 @@ app.get("/urls/:shortURL", (req, res) => {
   // The shortURL is whatever comes afet the "/urls/" in the address bar  --> you know itss get becuase we can access shortURL with params, with post its body  
   const shortURL = req.params.shortURL;
   // This shortURL is stored into the exported object (templateVars), along with another key longURL and its value (urlDatabase[shortURL]) that comes from the urlDatabase
-  const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
+  const templateVars = { shortURL, longURL: urlDatabase[shortURL], username: req.cookies.username };
   res.render("urls_show", templateVars);
 })
 
@@ -86,7 +92,7 @@ app.post("/login", (req, res) => {
   // when you are doing the login make sure you add a redirect to your express_server.js after you do res.cookie
   let username = req.body.username;
   res.cookie('username', username);
-  res.redirect('/urls')
+  res.redirect('/urls');
 })
 
 
