@@ -121,8 +121,9 @@ app.post("/register", (req, res) => {
     password
   }
 
-  res.cookie()
+  res.cookie('userID', userID);
   console.log(users);
+  res.redirect('/urls');
 })
 
 
