@@ -88,13 +88,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-app.post("/login", (req, res) => {
-  // when you are doing the login make sure you add a redirect to your express_server.js after you do res.cookie
-  let username = req.body.username;
-  res.cookie('username', username);
-  console.log('test');
-  res.redirect('/urls');
-})
+
 
 app.post("/logout", (req, res) => {
   res.clearCookie('userID');
@@ -109,12 +103,28 @@ app.get("/register", (req, res) => {
 
 app.get("/login", (req, res) => {  
   const user = users[req.cookies.userID];
-  const templateVars = { urls: urlDatabase, user };
+  const templateVars = { urls: urlDatabase, user };  
   res.render("login_page", templateVars);
 })
 
 
+app.post("/login", (req, res) => {
+  
+  const email = req.body.email;
+  const password = req.body.password;
 
+  const user = getUser(email);
+  if (!user) {
+    return res.status(400).send("User doesn't exist.");
+  }
+  if (user.password !== password) {
+    return res.status(400).send("Invalid password.");
+  }
+
+  res.cookie('userID', user.id);
+  console.log(users);
+  res.redirect('/urls');
+});
 
 app.post("/register", (req, res) => {
   const email = req.body.email;
@@ -164,6 +174,15 @@ const checkEmail = (email) => {
   for (const user in users) {
     if (email === users[user].email) {      
       return true;
+    }
+  };
+  return false;
+};
+
+const getUser = (email) => {    
+  for (const user in users) {
+    if (email === users[user].email) {      
+      return users[user];
     }
   };
   return false;

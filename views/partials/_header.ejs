@@ -11,7 +11,19 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
-      <% if (user) {%>
+
+     
+
+      <form action="/login ", method="GET", class="form-inline", style="margin: 0 auto;"> 
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+      <form action="/register", method="GET", class="form-inline", style="margin: 0 auto;"> 
+        <button type="submit" class="btn btn-primary">Register</button>
+      </form>
+
+
+
+      <!-- <% if (user) {%>
         <span style="padding-left: 970px;"> Logged in As: <%= user.email %> </span>
         <form action="/logout", method="POST", class="form-inline", style="margin: 0 auto;"> 
           <button type="submit" class="btn btn-primary">Logout</button>
@@ -21,7 +33,7 @@
           <input class="form-control" type="text" name="username" placeholder="Username" style="margin: 1em">
           <button type="submit" class="btn btn-primary">Login</button>
         </form>
-        <% } %>
+        <% } %> -->
     </div>
   </nav>
 </header>
