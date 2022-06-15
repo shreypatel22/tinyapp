@@ -16,6 +16,10 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+
+};
+
 
 // When you type in only '/' after website (defualt/home page)
 app.get("/", (req, res) => {
@@ -107,7 +111,18 @@ app.get("/register", (req, res) => {
 })
 
 app.post("/register", (req, res) => {
-  console.log('Test');
+  const email = req.body.email;
+  const password = req.body.password;
+  const userID = generateRandomString();
+
+  users[userID] = {
+    id: userID,
+    email,
+    password
+  }
+
+  res.cookie()
+  console.log(users);
 })
 
 
