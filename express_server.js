@@ -7,9 +7,7 @@ const cookieParser = require('cookie-parser');
 app.use(bodyParser.urlencoded({entended: true}));
 app.use(cookieParser());
 
-
 app.set('view engine', 'ejs');
-
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -19,7 +17,6 @@ const urlDatabase = {
 const users = {
 
 };
-
 
 // When you type in only '/' after website (defualt/home page)
 app.get("/", (req, res) => {
@@ -45,7 +42,6 @@ app.get("/urls", (req, res) => {
   res.render('urls_index', templateVars);
 })
 
-
 // You get post on /urls from urls_new.ejs (when you sumbit new url to be shorten)
 app.post("/urls", (req, res) => {
   // console.log(req.body);
@@ -55,14 +51,10 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 })
 
-
 app.get('/urls/new', (req, res) => {
   const templateVars = {users};
-
-  
   res.render("urls_new", templateVars);  
 })
-
 
 app.get("/urls/:shortURL", (req, res) => {
   // The shortURL is whatever comes afet the "/urls/" in the address bar  --> you know itss get becuase we can access shortURL with params, with post its body  
@@ -100,6 +92,7 @@ app.post("/login", (req, res) => {
   // when you are doing the login make sure you add a redirect to your express_server.js after you do res.cookie
   let username = req.body.username;
   res.cookie('username', username);
+  console.log('test');
   res.redirect('/urls');
 })
 
@@ -108,12 +101,20 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls');
 })
 
-
 app.get("/register", (req, res) => {  
   const user = users[req.cookies.userID];
   const templateVars = { urls: urlDatabase, user };
   res.render("register_page", templateVars);
 })
+
+app.get("/login", (req, res) => {  
+  const user = users[req.cookies.userID];
+  const templateVars = { urls: urlDatabase, user };
+  res.render("login_page", templateVars);
+})
+
+
+
 
 app.post("/register", (req, res) => {
   const email = req.body.email;
@@ -136,26 +137,26 @@ app.post("/register", (req, res) => {
   }
 
   console.log(users);
-
   res.cookie('userID', userID);
-
   res.redirect('/urls');
 })
 
 
 
+
+
+// --------------------------------------------------
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+
 const generateRandomString = () => {
-  var text = "";
-  
-  var charset = "abcdefghijklmnopqrstuvwxyz0123456789";
-  
+  var text = "";  
+  var charset = "abcdefghijklmnopqrstuvwxyz0123456789";  
   for (var i = 0; i < 6; i++)
-    text += charset.charAt(Math.floor(Math.random() * charset.length));
-  
+    text += charset.charAt(Math.floor(Math.random() * charset.length));  
   return text;
 }
 
