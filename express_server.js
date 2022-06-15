@@ -78,7 +78,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   // the value that comes from the address bar is only inside the two surrounding /'s (/:shortURL/)
   const shortURL = req.params.shortURL;  //if you  "/urls/:shortURLLL/delete" then you would need to do req.params.shortURLLL
   // delete the URL from the urlDatabase object
-  delete urlDatabase[shortURL];ac
+  delete urlDatabase[shortURL];
   // redirect back to urls page but now when it loads "url_index" (due to .get "/urls") it doesnt have the delete URL
   res.redirect("/urls")
 })
@@ -92,6 +92,11 @@ app.post("/login", (req, res) => {
   // when you are doing the login make sure you add a redirect to your express_server.js after you do res.cookie
   let username = req.body.username;
   res.cookie('username', username);
+  res.redirect('/urls');
+})
+
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
   res.redirect('/urls');
 })
 
