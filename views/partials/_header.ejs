@@ -12,13 +12,13 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
       <% if (username) {%>
-        <span> Logged in As: <%= username %> </span>
-        <form action="/logout", method="POST", class="form-inline", style="margin: 0 auto; width: 50%;"> 
+        <span style="padding-left: 970px;"> Logged in As: <%= username %> </span>
+        <form action="/logout", method="POST", class="form-inline", style="margin: 0 auto;"> 
           <button type="submit" class="btn btn-primary">Logout</button>
         </form>
       <% } else { %>
-        <form action="/login", method="POST", class="form-inline", style="margin: 0 auto; width: 50%;">    
-          <input class="form-control" type="text" name="username" placeholder="Username" style="width: 300px; margin: 1em">
+        <form action="/login", method="POST", class="form-inline", style="margin: 0 auto;  padding-left:  870px;">    
+          <input class="form-control" type="text" name="username" placeholder="Username" style="margin: 1em">
           <button type="submit" class="btn btn-primary">Login</button>
         </form>
         <% } %>
