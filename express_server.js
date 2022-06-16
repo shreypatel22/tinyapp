@@ -49,11 +49,17 @@ app.get('/hello', (req, res) => {
 app.get("/urls", (req, res) => {
   const user = users[req.cookies.userID];
   // console.log(user);
-   
 
-  const templateVars = { urls: urlDatabase, user };
+  if(!user) {
+    // return res.status(400).send("Please login.");
+    return res.redirect('/login');
+  };
 
-  console.log(templateVars);
+  const userURLs = getUserUrls(user);
+
+  const templateVars = { urls: userURLs, user };
+
+  // console.log(templateVars);
   res.render('urls_index', templateVars);
 })
 
@@ -61,7 +67,6 @@ app.get("/urls", (req, res) => {
 app.post("/urls", (req, res) => {
   // console.log(req.body);
   let shortURL = generateRandomString();
-  console.log
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
     userID: users[req.cookies.userID].id
@@ -77,7 +82,7 @@ app.get('/urls/new', (req, res) => {
   const templateVars = {user};
 
   if (!user) {
-    res.redirect('/login');
+    return res.redirect('/login');
   }
 
   res.render("urls_new", templateVars);  
@@ -194,15 +199,6 @@ const generateRandomString = () => {
   return text;
 }
 
-// const checkEmail = (email) => {    
-//   for (const user in users) {
-//     if (email === users[user].email) {      
-//       return true;
-//     }
-//   };
-//   return false;
-// };
-
 const getUser = (email) => {    
   for (const user in users) {
     if (email === users[user].email) {      
@@ -212,3 +208,24 @@ const getUser = (email) => {
   return false;
 };
 
+const getUserUrls = (user) => {
+  let userUrls = {};
+  for (const url in urlDatabase) {
+    if (urlDatabase[url].userID === user.id) {
+      userUrls[url] = {
+        longURL: urlDatabase[url].longURL,
+        userID: user.id
+      }      
+    }    
+  }
+  return userUrls; 
+}
+
+// const checkEmail = (email) => {    
+//   for (const user in users) {
+//     if (email === users[user].email) {      
+//       return true;
+//     }
+//   };
+//   return false;
+// };
