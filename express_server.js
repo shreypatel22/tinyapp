@@ -104,6 +104,9 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/:shortURL", (req, res) => {
   
+  // user to check using curl command
+    // let user = {id: '1223', email: '1@gmail.com', password: '123' } 
+
   const user = users[req.cookies.userID];
   const userURLs = getUserUrls(user);
   const shortURL = req.params.shortURL;
