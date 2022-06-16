@@ -13,15 +13,23 @@
       </div>
 
      
+      <% if (user) {%>
 
-      <form action="/login ", method="GET", class="form-inline", style="margin: 0 auto;"> 
-        <button type="submit" class="btn btn-primary">Login</button>
-      </form>
-      <form action="/register", method="GET", class="form-inline", style="margin: 0 auto;"> 
-        <button type="submit" class="btn btn-primary">Register</button>
-      </form>
+        <span style="padding-left: 970px;"> Logged in As: <%= user.email %> </span>
+        <form action="/logout", method="POST", class="form-inline", style="margin: 0 auto;"> 
+          <button type="submit" class="btn btn-primary">Logout</button>
+        </form>
 
+      <% } else { %>
 
+        <form action="/login ", method="GET", class="form-inline", style="margin: 0 auto;"> 
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <form action="/register", method="GET", class="form-inline", style="margin: 0 auto;"> 
+          <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+
+        <% } %>
 
       <!-- <% if (user) {%>
         <span style="padding-left: 970px;"> Logged in As: <%= user.email %> </span>

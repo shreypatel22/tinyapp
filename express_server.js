@@ -15,8 +15,9 @@ const urlDatabase = {
 };
 
 const users = {
-
+  123: {id: '123', email: '1@gmail.com', password: '123' }
 };
+
 
 // When you type in only '/' after website (defualt/home page)
 app.get("/", (req, res) => {
@@ -52,7 +53,8 @@ app.post("/urls", (req, res) => {
 })
 
 app.get('/urls/new', (req, res) => {
-  const templateVars = {users};
+  const user = users[req.cookies.userID];
+  const templateVars = {user};
   res.render("urls_new", templateVars);  
 })
 
@@ -122,7 +124,8 @@ app.post("/login", (req, res) => {
   }
 
   res.cookie('userID', user.id);
-  console.log(users);
+  
+  // console.log(users);
   res.redirect('/urls');
 });
 
@@ -150,9 +153,6 @@ app.post("/register", (req, res) => {
   res.cookie('userID', userID);
   res.redirect('/urls');
 })
-
-
-
 
 
 // --------------------------------------------------
