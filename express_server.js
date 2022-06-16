@@ -9,10 +9,27 @@ app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
+// const urlDatabase = {
+//   "b2xVn2": "http://www.lighthouselabs.ca",
+//   "9sm5xK": "http://www.google.com"
+// };
+
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+        longURL: "https://www.tsn.ca",
+        userID: "aJ48lW"
+    },
+  i3BoGr: {
+        longURL: "https://www.google.ca",
+        userID: "aJ48lW"
+    }
 };
+
+
+
+for (const url in urlDatabase) {
+  console.log(urlDatabase[url]);
+}
 
 const users = {
   123: {id: '123', email: '1@gmail.com', password: '123' }
@@ -38,8 +55,11 @@ app.get('/hello', (req, res) => {
 app.get("/urls", (req, res) => {
   const user = users[req.cookies.userID];
   // console.log(user);
+   
 
   const templateVars = { urls: urlDatabase, user };
+
+  console.log(templateVars);
   res.render('urls_index', templateVars);
 })
 
@@ -68,14 +88,14 @@ app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const user = users[req.cookies.userID];
   // This shortURL is stored into the exported object (templateVars), along with another key longURL and its value (urlDatabase[shortURL]) that comes from the urlDatabase
-  const templateVars = { shortURL, longURL: urlDatabase[shortURL], user };
+  const templateVars = { shortURL, longURL: urlDatabase[shortURL].longURL, user };
   res.render("urls_show", templateVars);
 })
 
 app.post("/urls/:shortURL", (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = req.params.shortURL;
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL].longURL = longURL;
   res.redirect(`/urls`);
 })
 
@@ -91,7 +111,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 })
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 

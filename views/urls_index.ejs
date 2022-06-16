@@ -32,7 +32,7 @@
             <!-- here the url is the key of the urlDatabase (from templateVar) which represents the shortURL-->
             <td><%= url %></td>
             <!-- here the urls[urls] is the longURL -->
-            <td><%= urls[url] %></td>
+            <td><%= urls[url].longURL %></td>
             <td>
               <!-- when you click on this button read (GET) info for that shorturl (<%= url %>) using the action path 
                    this then renders the urls_show.ejs from the express_server.js [app.get("/urls/:shortURL"]-->
