@@ -25,12 +25,6 @@ const urlDatabase = {
     }
 };
 
-
-
-for (const url in urlDatabase) {
-  console.log(urlDatabase[url]);
-}
-
 const users = {
   123: {id: '123', email: '1@gmail.com', password: '123' }
 };
@@ -67,7 +61,13 @@ app.get("/urls", (req, res) => {
 app.post("/urls", (req, res) => {
   // console.log(req.body);
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  console.log
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    userID: users[req.cookies.userID].id
+  }
+
+
   // since there is a redirect you never really stay on /urls but go to /urls/${shortURL} automatically when you click the sumbit new url button
   res.redirect(`/urls/${shortURL}`);
 })
@@ -116,7 +116,6 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 
-
 app.post("/logout", (req, res) => {
   res.clearCookie('userID');
   res.redirect('/urls');
@@ -148,6 +147,7 @@ app.post("/login", (req, res) => {
     return res.status(403).send("Invalid password.");
   }
 
+  // console.log(user);
   res.cookie('userID', user.id);
   
   // console.log(users);
@@ -178,7 +178,6 @@ app.post("/register", (req, res) => {
   res.cookie('userID', userID);
   res.redirect('/urls');
 })
-
 
 // --------------------------------------------------
 
