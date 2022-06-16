@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080;
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
 
 app.use(bodyParser.urlencoded({entended: true}));
 app.use(cookieParser());
@@ -172,7 +173,7 @@ app.post("/login", (req, res) => {
   if (!user) {
     return res.status(403).send("User doesn't exist.");
   }
-  if (user.password !== password) {
+  if (!bcrypt.compareSync(password, user.password)) {
     return res.status(403).send("Invalid password.");
   }
 
@@ -186,21 +187,22 @@ app.post("/login", (req, res) => {
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const userID = generateRandomString();
  
   if (email === '' || password === '') {
-    res.status(400);
-    res.send(`Error 400, please enter BOTH an email and password.`);
+    return res.status(400).send(`Error 400, please enter BOTH an email and password.`);
+    
   }
 
   if (getUser(email)) {
-    res.status(400).send('Email already registered, please enter a new email');
+    return res.status(400).send('Email already registered, please enter a new email');
   }
 
   users[userID] = {
     id: userID,
     email,
-    password
+    password: hashedPassword
   }
 
   console.log(users);
@@ -245,11 +247,3 @@ const getUserUrls = (user) => {
   return userUrls; 
 }
 
-// const checkEmail = (email) => {    
-//   for (const user in users) {
-//     if (email === users[user].email) {      
-//       return true;
-//     }
-//   };
-//   return false;
-// };
