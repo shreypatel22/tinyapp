@@ -22,7 +22,12 @@ const urlDatabase = {
   i3BoGr: {
         longURL: "https://www.google.ca",
         userID: "aJ48lW"
-    }
+    },
+
+  shortURLTest: {
+    longURL: "https://www.google.ca",
+    userID: "123"
+  }
 };
 
 const users = {
@@ -98,21 +103,37 @@ app.get("/urls/:shortURL", (req, res) => {
 })
 
 app.post("/urls/:shortURL", (req, res) => {
-  const longURL = req.body.longURL;
+  
+  const user = users[req.cookies.userID];
+  const userURLs = getUserUrls(user);
   const shortURL = req.params.shortURL;
-  urlDatabase[shortURL].longURL = longURL;
-  res.redirect(`/urls`);
+  
+  if(userURLs[shortURL]) {
+    const longURL = req.body.longURL; 
+    urlDatabase[shortURL].longURL = longURL;
+    res.redirect(`/urls`);
+  }
+
+  return res.status(403).send("This user cant edit this URL");
+
 })
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  // req.params gives an object where the key is "shortURL" and the value is whatever is in the addressbar where :shortURL is
-  // :shortURL can be named anything --> this is the name of the key in the object (after the :)
-  // the value that comes from the address bar is only inside the two surrounding /'s (/:shortURL/)
-  const shortURL = req.params.shortURL;  //if you  "/urls/:shortURLLL/delete" then you would need to do req.params.shortURLLL
-  // delete the URL from the urlDatabase object
-  delete urlDatabase[shortURL];
-  // redirect back to urls page but now when it loads "url_index" (due to .get "/urls") it doesnt have the delete URL
-  res.redirect("/urls")
+
+  // user to check using curl command
+  // let user = {id: '123', email: '1@gmail.com', password: '123' } 
+
+  const user = users[req.cookies.userID];
+  const userURLs = getUserUrls(user);
+  const shortURL = req.params.shortURL;
+
+  if(userURLs[shortURL]) {
+    delete urlDatabase[shortURL];
+    return res.redirect("/urls");
+  }
+
+  return res.status(403).send("This user cant delete this URL");
+
 })
 
 app.get("/u/:shortURL", (req, res) => {
