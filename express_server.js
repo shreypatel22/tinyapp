@@ -117,10 +117,10 @@ app.post("/login", (req, res) => {
 
   const user = getUser(email);
   if (!user) {
-    return res.status(400).send("User doesn't exist.");
+    return res.status(403).send("User doesn't exist.");
   }
   if (user.password !== password) {
-    return res.status(400).send("Invalid password.");
+    return res.status(403).send("Invalid password.");
   }
 
   res.cookie('userID', user.id);
@@ -139,7 +139,7 @@ app.post("/register", (req, res) => {
     res.send(`Error 400, please enter BOTH an email and password.`);
   }
 
-  if (checkEmail(email)) {
+  if (getUser(email)) {
     res.status(400).send('Email already registered, please enter a new email');
   }
 
@@ -170,14 +170,14 @@ const generateRandomString = () => {
   return text;
 }
 
-const checkEmail = (email) => {    
-  for (const user in users) {
-    if (email === users[user].email) {      
-      return true;
-    }
-  };
-  return false;
-};
+// const checkEmail = (email) => {    
+//   for (const user in users) {
+//     if (email === users[user].email) {      
+//       return true;
+//     }
+//   };
+//   return false;
+// };
 
 const getUser = (email) => {    
   for (const user in users) {
