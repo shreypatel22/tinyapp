@@ -10,6 +10,7 @@ const PORT = 8080;
 const bodyParser = require("body-parser");
 // const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
+const {getUser} = require('./helpers');
 
 app.use(bodyParser.urlencoded({entended: true}));
 
@@ -176,7 +177,7 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  const user = getUser(email);
+  const user = getUser(email, users);
   if (!user) {
     return res.status(403).send("User doesn't exist.");
   }
@@ -203,7 +204,7 @@ app.post("/register", (req, res) => {
     
   }
 
-  if (getUser(email)) {
+  if (getUser(email, users)) {
     return res.status(400).send('Email already registered, please enter a new email');
   }
 
@@ -213,7 +214,7 @@ app.post("/register", (req, res) => {
     password: hashedPassword
   }
 
-  console.log(users);
+  // console.log(users);
   // res.cookie('userID', userID);
   req.session.userID = userID;
   res.redirect('/urls');
@@ -234,14 +235,14 @@ const generateRandomString = () => {
   return text;
 }
 
-const getUser = (email) => {    
-  for (const user in users) {
-    if (email === users[user].email) {      
-      return users[user];
-    }
-  };
-  return false;
-};
+// const getUser = (email, database) => {    
+//   for (const user in database) {
+//     if (email === database[user].email) {      
+//       return database[user];
+//     }
+//   };
+//   return false;
+// };
 
 const getUserUrls = (user) => {
   let userUrls = {};
