@@ -45,7 +45,14 @@ const users = {
 
 // When you type in only '/' after website (defualt/home page)
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const user = users[req.session.userID];
+
+  if(!user) {    
+    return res.redirect('/login');
+  };
+
+  return res.redirect('/urls');
+
 });
 
 // Send json object of urlDatabase to client when they enter '/urls.json'
@@ -64,8 +71,8 @@ app.get("/urls", (req, res) => {
   // console.log(user);
 
   if(!user) {
-    // return res.status(400).send("Please login.");
-    return res.redirect('/login');
+    return res.status(400).send("Please login.");
+    // return res.redirect('/login');
   };
 
   const userURLs = getUserUrls(user);
