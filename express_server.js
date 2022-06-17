@@ -1,13 +1,19 @@
 const express = require('express');
 const app = express();
+const cookieSession = require('cookie-session');
+app.use(cookieSession({
+  name: 'session',
+  keys: ['userID']
+}))
+
 const PORT = 8080;
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 
 app.use(bodyParser.urlencoded({entended: true}));
-app.use(cookieParser());
 
+// app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 // const urlDatabase = {
@@ -53,7 +59,7 @@ app.get('/hello', (req, res) => {
 
 // Set data to urls_index.ejs (sending object [templateVars] --> in the .ejs file it is refered to as "urls" and its keys [url])
 app.get("/urls", (req, res) => {
-  const user = users[req.cookies.userID];
+  const user = users[req.session.userID];
   // console.log(user);
 
   if(!user) {
@@ -75,7 +81,7 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
-    userID: users[req.cookies.userID].id
+    userID: users[req.session.userID].id
   }
 
 
@@ -84,7 +90,7 @@ app.post("/urls", (req, res) => {
 })
 
 app.get('/urls/new', (req, res) => {
-  const user = users[req.cookies.userID];
+  const user = users[req.session.userID];
   const templateVars = {user};
 
   if (!user) {
@@ -97,7 +103,7 @@ app.get('/urls/new', (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   // The shortURL is whatever comes afet the "/urls/" in the address bar  --> you know itss get becuase we can access shortURL with params, with post its body  
   const shortURL = req.params.shortURL;
-  const user = users[req.cookies.userID];
+  const user = users[req.session.userID];
   // This shortURL is stored into the exported object (templateVars), along with another key longURL and its value (urlDatabase[shortURL]) that comes from the urlDatabase
   const templateVars = { shortURL, longURL: urlDatabase[shortURL].longURL, user };
   res.render("urls_show", templateVars);
@@ -108,7 +114,7 @@ app.post("/urls/:shortURL", (req, res) => {
   // user to check using curl command
     // let user = {id: '1223', email: '1@gmail.com', password: '123' } 
 
-  const user = users[req.cookies.userID];
+  const user = users[req.session.userID];
   const userURLs = getUserUrls(user);
   const shortURL = req.params.shortURL;
   
@@ -127,7 +133,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   // user to check using curl command
   // let user = {id: '123', email: '1@gmail.com', password: '123' } 
 
-  const user = users[req.cookies.userID];
+  const user = users[req.session.userID];
   const userURLs = getUserUrls(user);
   const shortURL = req.params.shortURL;
 
@@ -147,18 +153,19 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('userID');
+  // res.clearCookie('userID');
+  req.session = null;
   res.redirect('/urls');
 })
 
 app.get("/register", (req, res) => {  
-  const user = users[req.cookies.userID];
+  const user = users[req.session.userID];
   const templateVars = { urls: urlDatabase, user };
   res.render("register_page", templateVars);
 })
 
 app.get("/login", (req, res) => {  
-  const user = users[req.cookies.userID];
+  const user = users[req.session.userID];
   const templateVars = { urls: urlDatabase, user };  
   res.render("login_page", templateVars);
 })
@@ -178,7 +185,8 @@ app.post("/login", (req, res) => {
   }
 
   // console.log(user);
-  res.cookie('userID', user.id);
+  // res.cookie('userID', user.id);
+  req.session.userID = user.id;
   
   // console.log(users);
   res.redirect('/urls');
@@ -206,7 +214,8 @@ app.post("/register", (req, res) => {
   }
 
   console.log(users);
-  res.cookie('userID', userID);
+  // res.cookie('userID', userID);
+  req.session.userID = userID;
   res.redirect('/urls');
 })
 
