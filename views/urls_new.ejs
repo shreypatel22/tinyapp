@@ -11,17 +11,12 @@
   </head>
 
   <body>
-
     <%- include('partials/_header') %>
-
     <main style="margin: 1em;">
       <h3>Create TinyURL</h3>
-      <!-- Actions tells the form which url to sumbit to (/urls)  ---- redirect to action endpoint--> 
-      <!-- Method tells the form which HTTP method to use when submitting the form (POST) ---use post to hide infomation-->
       <form class="form-inline" action="/urls" method="POST">
         <div class="form-group mb-2">
           <label for="longURL">Enter a URL:</label>
-          <!-- named input of 'name' and it is set to longURL -->
           <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
           <button type="submit" class="btn btn-primary">Submit</button>
         </div>

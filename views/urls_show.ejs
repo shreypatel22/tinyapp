@@ -12,21 +12,15 @@
   <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        <!-- Here it is accessing the object from express_server.js -->
-        <!-- the object has two keys shortURL and longURL -->
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       </div>
       <div>
-        <!-- CHANGE action -->
-
           <form action="/urls/<%= shortURL %>", method="POST", class="form-inline", style="margin: 0 auto; width: 32%;">
             <label for="longURL">New a URL:</label>
-            <!-- named input of 'name' and it is set to longURL -->
             <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
             <button type="submit" class="btn btn-primary">Update</button>
           </form>
-
       </div>
     <div class="card-footer text-muted"></div>
   </div>
