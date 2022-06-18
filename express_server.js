@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({entended: true}));
 
 app.set('view engine', 'ejs');
 
+// Storing all urls
 const urlDatabase = {
   b6UTxQ: {
         longURL: "https://www.tsn.ca",
@@ -31,10 +32,12 @@ const urlDatabase = {
   }
 };
 
+// Storing users created
 const users = {
   123: {id: '123', email: '1@gmail.com', password: '123' }
 };
 
+// Home page
 app.get("/", (req, res) => {
   const user = users[req.session.userID];
 
@@ -54,9 +57,11 @@ app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+// Urls Page
 app.get("/urls", (req, res) => {
   const user = users[req.session.userID];
 
+  // Return error if user does not exist
   if (!user) {
     return res.status(400).send("Please login.");
   }
@@ -67,8 +72,9 @@ app.get("/urls", (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+// Redirect to urls:shortURL page when adding new urls
 app.post("/urls", (req, res) => {
-  let shortURL = generateRandomString();
+  let shortURL = generateUniqueShortURL();
   urlDatabase[shortURL] = {
     longURL: req.body.longURL,
     userID: users[req.session.userID].id
@@ -77,10 +83,12 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+// Page to add new urls
 app.get('/urls/new', (req, res) => {
   const user = users[req.session.userID];
   const templateVars = {user};
 
+  // Redirect to login page if user is not logged in
   if (!user) {
     return res.redirect('/login');
   }
@@ -88,6 +96,7 @@ app.get('/urls/new', (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+// Page for shortURL
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const user = users[req.session.userID];
@@ -95,6 +104,7 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// Edit longURL and then redirect to urls page
 app.post("/urls/:shortURL", (req, res) => {
   
   const user = users[req.session.userID];
@@ -107,9 +117,11 @@ app.post("/urls/:shortURL", (req, res) => {
     res.redirect(`/urls`);
   }
 
+  // Return Error if user has not created that url
   return res.status(403).send("This user cant edit this URL");
 });
 
+// Delete shortURLs created by user
 app.post("/urls/:shortURL/delete", (req, res) => {
 
   const user = users[req.session.userID];
@@ -121,43 +133,50 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     return res.redirect("/urls");
   }
 
+  // Return Error if user has not created that url
   return res.status(403).send("This user cant delete this URL");
 
 });
 
+// Redirect to longURL
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
-
+// Logout
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect('/urls');
 });
 
+// Load register page
 app.get("/register", (req, res) => {
   const user = users[req.session.userID];
   const templateVars = { urls: urlDatabase, user };
   res.render("register_page", templateVars);
 });
 
+// Load Login Page
 app.get("/login", (req, res) => {
   const user = users[req.session.userID];
   const templateVars = { urls: urlDatabase, user };
   res.render("login_page", templateVars);
 });
 
-
+// Log user in
 app.post("/login", (req, res) => {
   
   const email = req.body.email;
   const password = req.body.password;
 
   const user = getUser(email, users);
+
+  // Send error if user is not registerd
   if (!user) {
     return res.status(403).send("User doesn't exist.");
   }
+  // Send error if incorrect password is entered
   if (!bcrypt.compareSync(password, user.password)) {
     return res.status(403).send("Invalid password.");
   }
@@ -166,17 +185,20 @@ app.post("/login", (req, res) => {
   res.redirect('/urls');
 });
 
+// Register User
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
-  const userID = generateRandomString();
+  const userID = generateUniqueShortURL();
  
-  if (email === '' || password === '') {
+  // Send error if email or password are not entered
+  if (!email  || !password) {
     return res.status(400).send(`Error 400, please enter BOTH an email and password.`);
     
   }
 
+  // Send error if email is already registered
   if (getUser(email, users)) {
     return res.status(400).send('Email already registered, please enter a new email');
   }
@@ -196,8 +218,8 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-
-const generateRandomString = () => {
+// Create unique shortURL
+const generateUniqueShortURL = () => {
   let text = "";
   let charset = "abcdefghijklmnopqrstuvwxyz0123456789";
   for (let i = 0; i < 6; i++)
@@ -205,6 +227,7 @@ const generateRandomString = () => {
   return text;
 };
 
+// Return the urls created by user
 const getUserUrls = (user) => {
   let userUrls = {};
   for (const url in urlDatabase) {
