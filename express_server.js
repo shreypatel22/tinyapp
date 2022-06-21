@@ -59,16 +59,17 @@ app.get('/hello', (req, res) => {
 
 // Urls Page
 app.get("/urls", (req, res) => {
-  const user = users[req.session.userID];
+  let user = users[req.session.userID];
 
-  // Return error if user does not exist
-  if (!user) {
-    return res.status(400).send("Please login.");
+  if (user) {
+    const userURLs = getUserUrls(user);
+    const templateVars = { urls: userURLs, user };
+    return res.render('urls_index', templateVars);
+
   }
 
-  const userURLs = getUserUrls(user);
-  const templateVars = { urls: userURLs, user };
-
+  user = undefined;
+  const templateVars = { user };
   res.render('urls_index', templateVars);
 });
 
