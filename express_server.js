@@ -98,8 +98,13 @@ app.get('/urls/new', (req, res) => {
 
 // Page for shortURL
 app.get("/urls/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL;
   const user = users[req.session.userID];
+
+  if (!user) {
+    return res.status(400).send("Please login.");
+  }
+
+  const shortURL = req.params.shortURL;
   const templateVars = { shortURL, longURL: urlDatabase[shortURL].longURL, user };
   res.render("urls_show", templateVars);
 });
